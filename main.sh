@@ -135,8 +135,6 @@ done
 #Authenticates two users
 user1=$(authenticate_user | xargs)
 user2=$(authenticate_user | xargs)
-echo "DEBUG user1=[$user1]
-echo "DEBUG user2=[$user2]
 # ensures that both the users are different 
 while [ "$user1" = "$user2" ]; do
 	echo "Error: Both users cannot have the same usernames."
