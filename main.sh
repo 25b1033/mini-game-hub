@@ -142,17 +142,15 @@ while [ "$user1" = "$user2" ]; do
 	while true; do
 		read -p "Which user wishes to re-login? (1/2): " choice
 		if [ "$choice" = "1" ]; then
-			old_user1="$user1"
-			user1=$(authenticate_user)
-			if [ "$user1" != "$old_user1" ]; then
+			user1=$(authenticate_user | xargs)
+			if [ "$user1" != "$user2" ]; then
 				break
 			else
 				echo "Username is already taken by other user. Please try another username."
 			fi
 		elif [ "$choice" = "2" ]; then
-			old_user2="$user2"
-			user2=$(authenticate_user)
-			if [ "$user2" != "$old_user2" ]; then
+			user2=$(authenticate_user | xargs)
+			if [ "$user2" != "$user1" ]; then
 				break
 			else
 				echo "Username is already taken by other user. Please try another username."
@@ -164,9 +162,6 @@ while [ "$user1" = "$user2" ]; do
 		fi
 	done
 done
-
-# NOTE:
-# Currently, this system doesn't handle the edge case where when the usernames of both users match and on relogin the users deliberately put the same username again. I still can't figure out the soution for this problem but once I actually do I will surely resolve it.
 
 # launch the game with the authenticated users
 python3 game.py "$user1" "$user2"
