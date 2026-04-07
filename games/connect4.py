@@ -1,7 +1,7 @@
 #Importing required libraries
 import numpy as np
 import pygame
-
+from game import GameBase
 
 #Class for Connect4
 class Connect4(GameBase):
@@ -22,9 +22,9 @@ class Connect4(GameBase):
 		if self.checkmove(row,column):
 			for r in range(6,-1,-1):
 				if self.board[r][column] == 0:
-					self.board[r]column] == -2*(self.currentplayerindex) + 1
+					self.board[r][column] == -2*(self.currentplayerindex) + 1
 					return True
-		else
+		else:
 			return False
 
 	def valid_move(self):
