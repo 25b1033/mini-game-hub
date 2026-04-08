@@ -1,3 +1,211 @@
+#---------------------------------------------------Importing necessary modules and libraries--------------------------------------------------------------
+#Importing sys fo command line arguments
+import sys
+#Importing numpy lib for board array
+import numpy as np
+#Importing pygame for GUI menu and Gameplay
+import pygame
+#Importing ABC(Abstract Base Class) and abstract method to allow creating a base class with methods that must be implemented by all subclasses
+from abc import ABC, abstractmethod
+#Importing specific game classes from the games package so that the menu can create instances of each game when selected
+from games.tictactoe import TicTactoe
+from games.connect4 import Connect4
+from games.othello import Othello
+
+player1 = sys.argv[1]
+player2 = sys.argv[2]
+
+#----------------------------------------------------------------------BASECLASS---------------------------------------------------------------
+
+class Gamebase(ABC):
+	"""
+	Base class for all 2-player, turn-based board games.
+	Handles player info, turn switching, and board initialization.
+	Subclasses must implement check_win().
+	"""
+
+	def __init__(self, player1, player2, board_shape):
+		#Initialize the game with players and board shape.
+
+		self.players = [player1,player2]          #arraymwith player names
+		self.currentplayerindex = 0               #array index of the player whose turn it is
+		self.board = np.zeros(board_shape)        #numpy array for the game board
+	
+	@abstractmethod
+	def valid_move(self):
+		#Checks if the opponent has valid move or not and if not the function switch_turn will implement a pass
+		pass
+	def switch_turn(self):
+		#This is a function implemented to switch turns
+		if self.valid_move():
+			self.currentplayerindex = 1 - self.currentplayerindex
+		else:
+			print("Player has no legal moves hence it is a pass")
+
+	def currentturn_player(self):
+		#This function is implemented to return the player name whose turn it is
+
+		return self.players[self.currentplayerindex]
+
+	@abstractmethod
+	def check_win(self):
+		"""
+		Abstract method for checking win/draw.
+        	Subclasses must implement this.
+		returns 0 if its not a win/draw
+		returns 1 if win
+		returns 2 if it is a draw	
+		"""
+		pass
+	@abstractmethod
+	def checkmove(self,row,column):
+		"""Abstract method for checking if a move is valid or not """
+
+	@abstractmethod
+	def make_move(self, row, column):
+		"""
+		Abstract method for making a move on (row,column)
+		returns true if move was applied
+		returns false if the move is invalid 
+		Subclasses must implement rule
+		"""
+		pass
+
+	@abstractmethod
+	def draw_piece(self,screen,cellsize):
+		"""
+		Abstract method for drawing piece by reading the numpy array
+		"""
+
+#---------------------------------------------------------------------Setting up the window-------------------------------------------------------------------------------
+#initialise pygame
+pygame.init()
+
+#Set up the window
+screen = pygame.display.set_mode((600, 600))
+pygame.display.set_caption("MINI GAME HUB")
+font = pygame.font.Font(None, 40)
+
+#----------------------------------------------------------------------------GAME MENU-----------------------------------------------------------------------------------
+
+#Function to display main menu with three game buttons
+def show_menu():
+	screen.fill((0,0,0)) #black background
+
+	#Hardcoded buttons
+	rect1 = pygame.Rect(200, 100, 200, 100)
+	rect2 = pygame.Rect(200, 250, 200, 100)
+	rect3 = pygame.Rect(200, 400, 200, 100)
+
+	pygame.draw.rect(screen, (100,200,100) , rect1)
+	pygame.draw.rect(screen, (100,200,100) , rect2)
+	pygame.draw.rect(screen, (100,200,100) , rect3)
+
+	# Blitting by creating a surface with required text
+	screen.blit(font.render("TicTacToe", True, (0,0,0)),(rect1.x + 50, rect1.y + 30))
+	screen.blit(font.render("Connect4", True, (0,0,0)), (rect2.x + 50, rect2.y + 30))
+	screen.blit(font.render("Othello" , True, (0,0,0)), (rect3.x + 50, rect3.y + 30))
+
+	pygame.display.flip()
+	
+	# Returning buttons for click detection
+	return rect1, rect2, rect3
+
+# Function for main menu loop, waits for the players to select a game
+def menu_loop():
+	rect1, rect2, rect3 = show_menu()
+	while True:
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				pygame.quit() #close pygame window
+				sys.exit() #Exit program
+			elif event.type == pygame.MOUSEBUTTONDOWN:
+				pos = event.pos
+				if rect1.collidepoint(pos):
+					return TicTacToe
+				elif rect2.collidepoint(pos):
+					return Connect4
+				elif rect3.collidepoint(pos):
+					return Othello
+
+	#Small delay to reduce CPU usage
+		pygame.time.wait(50)
+
+#-----------------------------------------------------------------------------GAME LOOP----------------------------------------------------------------------------------------
+
+
+#Function to for the gameplay 
+def gameplay(game_class):
+	game = Game(player1,player2) #creating a class object
+	cellsize = 50 #defining cellsize
+	rows,columns = game.board.shape #extracting no. of rows and columns
+	running = True #variable to make sure game keeps running until exited
+	winner = None #variable to store winner's name
+
+	#Main game loop , keeps running until win,draw or exit.
+	while running:
+		#Drawing game board
+		screen.fill((100,100,100))
+		for r in range(rows):
+			for c in range(columns):
+				rect = pygame.Rect(c*cellsize + 100, r*cellsize + 100, cellsize, cellsize)
+				pygame.draw.rect(screen, (200,100,200), rect , 3)
+	
+		#Displaying which player's turn it is 
+		text = font.render(f"{game.currentturn_player()}'s turn", True, (255, 255, 255))
+		screen.blit(text,(100,30))
+		pygame.display.flip()
+		
+		#Event handling
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				pygame.quit()#close pygame window
+				sys.exit() #Exit program
+			elif event.type == pygame.MOUSEBUTTONDOWN:
+				x,y = event.pos
+				#Convert mouse click position to board coordinates
+				column = (x-100) // cellsize
+				row = (y-100) // cellsize
+				#Attempt to make a move
+				if game.make_move(row,column):
+					# Check if the game has been won or drawn 
+					result = game.checkwin()
+					if result == 0:
+						# No win/draw -> switch turns
+						game.switch_turn()
+					elif result == 1:
+						#Current player wins
+						winner = game.currentturn_player()
+						running = False
+					else: 
+						#Draw
+						winner = "Draw"
+						running = False
+	
+	# Display the final result
+	screen.fill((0, 0, 0))
+	if winner == "Draw":
+		win_text = font.render("It's a Draw!", True, (255, 255, 0))
+	else:
+		win_text = font.render(f"{winner} wins!", True, (255, 255, 0))
+	screen.blit(win_text, (150, 250))
+	pygame.display.flip()
+	
+	pygame.time.wait(3000)
+
+	#Recording game results and analytics
+
+#----------------------------------------------------------------------------------------MAIN FUNCTION--------------------------------------------------------------------------------------
+def main():
+	#Main program: shows menu , runs selected game, repeat.
+	while True:
+		game_class = menu_loop() #Wait for the player selection
+		gameplay(game_class) #Runs the selected game
+
+#Run the program 
+if __name__ == "__main__":
+	main()
+
 
 
 
