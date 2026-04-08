@@ -5,24 +5,27 @@ class Othello(Gamebase):
     def __init__(self,player1,player2,):
         super().__init__(player1,player2,(8,8))
 
-    def validmove():
-        
+    def validmove(self):
+        pass
     
-    def checkmove():
-        
+    def checkmove(self,row,column):
+        pass
     
-    def make_move():
+    def make_move(self,row,column):
         if self.checkmove():
-            self.board.[row][col]=self.currentplayerindex + 1
+            self.board[row][column]=self.currentplayerindex + 1
             return True
         return False
     
-    def check_win():
+    def check_win(self):
+        a=self.board
         p1=a[a==1]
         p2=a[a==2]
         if p1.size > p2.size:
             return 1
         elif p2.size > p1.size:
+            return 1
+        elif np.any(a==0):
             return 2
         else:
             return 0
