@@ -7,10 +7,6 @@ import numpy as np
 import pygame
 #Importing ABC(Abstract Base Class) and abstract method to allow creating a base class with methods that must be implemented by all subclasses
 from abc import ABC, abstractmethod
-#Importing specific game classes from the games package so that the menu can create instances of each game when selected
-from games.tictactoe import TicTactoe
-from games.connect4 import Connect4
-from games.othello import Othello
 #importing path to read history.csv
 from pathlib import Path
 #importing pyplot to plot bargraph and pie chart
@@ -20,7 +16,6 @@ from collections import Counter
 from datetime import date
 #importing subprocess to give command to terminal
 import subprocess
-
 
 player1 = sys.argv[1]
 player2 = sys.argv[2]
@@ -136,10 +131,13 @@ def menu_loop():
 			elif event.type == pygame.MOUSEBUTTONDOWN:
 				pos = event.pos
 				if rect1.collidepoint(pos):
+					from games.tictactoe import TicTactoe #importing  class Tictactoe from game file
 					return TicTactoe
 				elif rect2.collidepoint(pos):
+					from games.connect4 import Connect4 #Importing class connect4 from the respective game file
 					return Connect4
 				elif rect3.collidepoint(pos):
+					from games.othello import Othello #Importing class Othello from the respective game file
 					return Othello
 
 	#Small delay to reduce CPU usage
@@ -150,7 +148,7 @@ def menu_loop():
 
 #Function to for the gameplay 
 def gameplay(game_class):
-	game = Game(player1,player2) #creating a class object
+	game = game_class(player1,player2) #creating a class object
 	cellsize = 50 #defining cellsize
 	rows,columns = game.board.shape #extracting no. of rows and columns
 	running = True #variable to make sure game keeps running until exited
@@ -166,6 +164,10 @@ def gameplay(game_class):
 				rect = pygame.Rect(c*cellsize + 100, r*cellsize + 100, cellsize, cellsize)
 				pygame.draw.rect(screen, (200,100,200), rect , 3)
 	
+		#Drawing the piece
+		game.draw_piece(screen,cellsize)
+		pygame.display.flip()
+
 		#Displaying which player's turn it is 
 		text = font.render(f"{game.currentturn_player()}'s turn", True, (255, 255, 255))
 		screen.blit(text,(100,30))
@@ -184,7 +186,7 @@ def gameplay(game_class):
 				#Attempt to make a move
 				if game.make_move(row,column):
 					# Check if the game has been won or drawn 
-					result = game.checkwin()
+					result = game.check_win()
 					if result == 0:
 						# No win/draw -> switch turns
 						game.switch_turn()

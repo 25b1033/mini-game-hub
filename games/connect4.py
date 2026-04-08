@@ -1,10 +1,10 @@
 #Importing required libraries
 import numpy as np
 import pygame
-from game import GameBase
+from game import Gamebase
 
 #Class for Connect4
-class Connect4(GameBase):
+class Connect4(Gamebase):
 	
 	def __init__(self,player1,player2):
 		#inherit the consturctor from the base class
@@ -22,7 +22,7 @@ class Connect4(GameBase):
 		if self.checkmove(row,column):
 			for r in range(6,-1,-1):
 				if self.board[r][column] == 0:
-					self.board[r][column] == -2*(self.currentplayerindex) + 1
+					self.board[r][column] = -2*(self.currentplayerindex) + 1
 					return True
 		else:
 			return False
@@ -31,20 +31,20 @@ class Connect4(GameBase):
 		#This function check the next player has a valid move or not
 		return (self.board[0] == 0).any()
 
-	def checkwin(self):
+	def check_win(self):
 		#This function is to check win/draw and return 0 in game is ongoing, 1 if it is a win, 2 if it is a draw
 
 		t = self.board
-		row = t[:0:4] + t[:1:5] + t[:2:6] + t[:3:7]
-		column = t[0:4:] + t[1:5:] + t[2:6:] + t[3:7:]
-		diag1 = t[0:4,0:4] + t[1:5,1:5] + t[2:6,2:6] + t[3:7,3:7]
-		diag2 = t[3:7,0:4] + t[2:6,1:5] + t[1:5,2:6] + t[0:4,3:7]
+		row = t[:, :-3] + t[:, 1:-2] + t[:, 2:-1] + t[:, 3:]
+		column = t[:-3, :] + t[1:-2, :] + t[2:-1, :] + t[3:, :]
+		diag1 = t[:-3, :-3] + t[1:-2, 1:-2] + t[2:-1, 2:-1] + t[3:, 3:]
+		diag2 = t[3:, :-3] + t[2:-1, 1:-2] + t[1:-2, 2:-1] + t[:-3, 3:]
 		
 		#Check row for win
 		if np.max(row) == 4 or np.min(row) == -4:
 			return 1
 		#Check column for win
-		elif np.max(column) == 4 or np.min(row) == -4:
+		elif np.max(column) == 4 or np.min(column) == -4:
 			return 1
 		#Check diagonal for win
 		elif np.max(diag1) == 4 or np.min(diag1) == -4:
@@ -53,7 +53,7 @@ class Connect4(GameBase):
 		elif np.max(diag2) == 4 or np.min(diag2) == -4:
 			return 1
 		#Check draw condition
-		elif self.valid_move():
+		elif not self.valid_move():
 			return 2
 		#if not the game is still ongoing
 		else:
