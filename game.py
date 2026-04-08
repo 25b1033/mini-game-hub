@@ -11,6 +11,16 @@ from abc import ABC, abstractmethod
 from games.tictactoe import TicTactoe
 from games.connect4 import Connect4
 from games.othello import Othello
+#importing path to read history.csv
+from pathlib import Path
+#importing pyplot to plot bargraph and pie chart
+from matplotlib import pyplot as plt
+#importing counter to count for plotting
+from collections import Counter
+from datetime import date
+#importing subprocess to give command to terminal
+import subprocess
+
 
 player1 = sys.argv[1]
 player2 = sys.argv[2]
@@ -42,6 +52,10 @@ class Gamebase(ABC):
 		else:
 			print("Player has no legal moves hence it is a pass")
 
+	def otherplayer(self):
+		self.other_player_index=1-self.currentplayerindex
+		return self.players[self.other_player_index]
+	
 	def currentturn_player(self):
 		#This function is implemented to return the player name whose turn it is
 
@@ -122,7 +136,7 @@ def menu_loop():
 			elif event.type == pygame.MOUSEBUTTONDOWN:
 				pos = event.pos
 				if rect1.collidepoint(pos):
-					return TicTacToe
+					return TicTactoe
 				elif rect2.collidepoint(pos):
 					return Connect4
 				elif rect3.collidepoint(pos):
@@ -141,6 +155,7 @@ def gameplay(game_class):
 	rows,columns = game.board.shape #extracting no. of rows and columns
 	running = True #variable to make sure game keeps running until exited
 	winner = None #variable to store winner's name
+	loser = None #variable to store loser's name
 
 	#Main game loop , keeps running until win,draw or exit.
 	while running:
@@ -176,6 +191,7 @@ def gameplay(game_class):
 					elif result == 1:
 						#Current player wins
 						winner = game.currentturn_player()
+						loser = game.otherplayer()
 						running = False
 					else: 
 						#Draw
@@ -188,13 +204,16 @@ def gameplay(game_class):
 		win_text = font.render("It's a Draw!", True, (255, 255, 0))
 	else:
 		win_text = font.render(f"{winner} wins!", True, (255, 255, 0))
+		record_result(winner,loser,game)
 	screen.blit(win_text, (150, 250))
 	pygame.display.flip()
 	
 	pygame.time.wait(3000)
 
 	#Recording game results and analytics
-
+	show_leaderboard()
+	plotting()
+	post_game_loop(screen)
 #----------------------------------------------------------------------------------------MAIN FUNCTION--------------------------------------------------------------------------------------
 def main():
 	#Main program: shows menu , runs selected game, repeat.
@@ -206,323 +225,13 @@ def main():
 if __name__ == "__main__":
 	main()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#import library--------------------------------------------------------------------------------------------------------------------------
-from pathlib import Path
-import numpy as np
-from matplotlib import pyplot as plt
-from collections import Counter
-from datetime import date
-import pygame
-import subprocess
-import sys
-
 #define path to history.csv
 history=Path("history.csv")
 
 #record results of game-----------------------------------------------------------------------------------------------------------------
-def record_result():
+def record_result(winner,loser,game):
         with history.open("a") as f:
-                f.write(winner + "," + loser + "," + str(date.today()) + "," + game + "\n")
+                f.write(winner + "," + loser + "," + str(date.today()) + "," + game+ "\n")
 
 #show leaderboard-----------------------------------------------------------------------------------------------------------------------
 def show_leaderboard():

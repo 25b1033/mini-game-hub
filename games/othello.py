@@ -30,7 +30,7 @@ class Othello(Gamebase):
         else:
             return 0
 
-    def draw_piece():
+    def draw_piece(self,cellsize,screen):
         for r in range(10):
             for c in range(10):
                 x = c*cellsize + 100 + cellsize//2
