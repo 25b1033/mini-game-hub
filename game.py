@@ -30,6 +30,8 @@ class Gamebase(ABC):
 		self.players = [player1,player2]          #arraymwith player names
 		self.currentplayerindex = 0               #array index of the player whose turn it is
 		self.board = np.zeros(board_shape)        #numpy array for the game board
+	
+	@abstractmethod
 	def valid_move(self):
 		#Checks if the opponent has valid move or not and if not the function switch_turn will implement a pass
 		pass
@@ -69,6 +71,11 @@ class Gamebase(ABC):
 		"""
 		pass
 
+	@abstractmethod
+	def draw_piece(self,screen,cellsize):
+		"""
+		Abstract method for drawing piece by reading the numpy array
+		"""
 
 #---------------------------------------------------------------------Setting up the window-------------------------------------------------------------------------------
 #initialise pygame
