@@ -5,14 +5,14 @@ class TicTactoe(Gamebase):
     def __init__(self,player1,player2,):
         super().__init__(player1,player2,(10,10))
 
-    def validmove(self):
+    def valid_move(self):
         return (self.board[0] == 0).any()
     
     def checkmove(self,row,column):
         return row<=10 and column<=10 and self.board[row][column]==0
     
     def make_move(self,row,column):
-        if self.checkmove():
+        if self.checkmove(row,column):
             self.board[row][column]=-2*self.currentplayerindex + 1
             return True
         return False
@@ -36,7 +36,7 @@ class TicTactoe(Gamebase):
         #check in antidiagonal
         elif np.max(diag2)==5 or np.min(diag2)==-5:
             return 1
-        elif np.any(t==0):
+        elif not self.valid_move():
             return 2
         else:
             return 0
@@ -47,13 +47,12 @@ class TicTactoe(Gamebase):
                 x = c*cellsize + 100 + cellsize//4
                 y = r*cellsize + 100 + cellsize//4
 
-            font = pygame.font.SysFont('Arial',cellsize//2)
+                font = pygame.font.SysFont('Arial',cellsize//2)
 
-            if self.board[r][c]==-1:
-                o_txt=font.render("O",True,(0,0,0))
-                screen.blit(o_txt,(x,y))
-            elif self.board[r][c]==1:
-                x_txt=font.render("X",True,(0,0,0))
-                screen.blit(x_txt,(x,y))
+                if self.board[r][c]==-1:
+                    o_txt=font.render("O",True,(255,255,255))
+                    screen.blit(o_txt,(x,y))
+                elif self.board[r][c]==1:
+                    x_txt=font.render("X",True,(255,255,255))
+                    screen.blit(x_txt,(x,y))
             
-            pygame.display.update()

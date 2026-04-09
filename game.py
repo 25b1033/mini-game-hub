@@ -142,102 +142,17 @@ def menu_loop():
 
 	#Small delay to reduce CPU usage
 		pygame.time.wait(50)
-
-#-----------------------------------------------------------------------------GAME LOOP----------------------------------------------------------------------------------------
-
-
-#Function to for the gameplay 
-def gameplay(game_class):
-	game = game_class(player1,player2) #creating a class object
-	cellsize = 50 #defining cellsize
-	rows,columns = game.board.shape #extracting no. of rows and columns
-	running = True #variable to make sure game keeps running until exited
-	winner = None #variable to store winner's name
-	loser = None #variable to store loser's name
-
-	#Main game loop , keeps running until win,draw or exit.
-	while running:
-		#Drawing game board
-		screen.fill((100,100,100))
-		for r in range(rows):
-			for c in range(columns):
-				rect = pygame.Rect(c*cellsize + 100, r*cellsize + 100, cellsize, cellsize)
-				pygame.draw.rect(screen, (200,100,200), rect , 3)
-	
-		#Drawing the piece
-		game.draw_piece(screen,cellsize)
-		pygame.display.flip()
-
-		#Displaying which player's turn it is 
-		text = font.render(f"{game.currentturn_player()}'s turn", True, (255, 255, 255))
-		screen.blit(text,(100,30))
-		pygame.display.flip()
-		
-		#Event handling
-		for event in pygame.event.get():
-			if event.type == pygame.QUIT:
-				pygame.quit()#close pygame window
-				sys.exit() #Exit program
-			elif event.type == pygame.MOUSEBUTTONDOWN:
-				x,y = event.pos
-				#Convert mouse click position to board coordinates
-				column = (x-100) // cellsize
-				row = (y-100) // cellsize
-				#Attempt to make a move
-				if game.make_move(row,column):
-					# Check if the game has been won or drawn 
-					result = game.check_win()
-					if result == 0:
-						# No win/draw -> switch turns
-						game.switch_turn()
-					elif result == 1:
-						#Current player wins
-						winner = game.currentturn_player()
-						loser = game.otherplayer()
-						running = False
-					else: 
-						#Draw
-						winner = "Draw"
-						running = False
-	
-	# Display the final result
-	screen.fill((0, 0, 0))
-	if winner == "Draw":
-		win_text = font.render("It's a Draw!", True, (255, 255, 0))
-	else:
-		win_text = font.render(f"{winner} wins!", True, (255, 255, 0))
-		record_result(winner,loser,game)
-	screen.blit(win_text, (150, 250))
-	pygame.display.flip()
-	
-	pygame.time.wait(3000)
-
-	#Recording game results and analytics
-	show_leaderboard()
-	plotting()
-	post_game_loop(screen)
-#----------------------------------------------------------------------------------------MAIN FUNCTION--------------------------------------------------------------------------------------
-def main():
-	#Main program: shows menu , runs selected game, repeat.
-	while True:
-		game_class = menu_loop() #Wait for the player selection
-		gameplay(game_class) #Runs the selected game
-
-#Run the program 
-if __name__ == "__main__":
-	main()
-
+#----------------------------------------------------------------------------------------------------------------------------------------------
 #define path to history.csv
 history=Path("history.csv")
 
 #record results of game-----------------------------------------------------------------------------------------------------------------
 def record_result(winner,loser,game):
         with history.open("a") as f:
-                f.write(winner + "," + loser + "," + str(date.today()) + "," + game+ "\n")
+                f.write("\n"+winner + "," + loser + "," + str(date.today()) + "," + game)
 
 #show leaderboard-----------------------------------------------------------------------------------------------------------------------
 def show_leaderboard():
-        pygame.init()
         screen= pygame.display.set_mode((500,200)) #window to allow user to choose screen for leaderboard
         pygame.display.set_caption("Metric Choice")# set title for window
 
@@ -321,27 +236,112 @@ def plotting():
         ax2.set_title("Most Played Games")
 
         plt.show(block=False)
-        plt.pause(10)
+        plt.pause(1)
 
 #post-game loop---------------------------------------------------------------------------------------------------------------------------------
 def post_game_loop(screen):
-        font = pygame.font.SysFont('Arial',20)#define font for display
-        running=True
-        play_btn=pygame.rect(100,200,150,60)
-        quit_btn=pygame.rect(350,200,150,60)
+		screen = pygame.display.set_mode((600, 600))
+		pygame.display.set_caption("PLAY AGAIN")
+		font = pygame.font.SysFont('Arial',20)#define font for display
+		running=True
+		play_btn=pygame.Rect(100,200,150,60)
+		quit_btn=pygame.Rect(350,200,150,60)
 
-        while running:
-                for event in pygame.event.get():
-                        if event.type == pygame.MOUSEBUTTONDOWN:
-                                if play_btn.collidepoint(event.pos):
-                                        return 
-                                elif quit_btn.collidepoint(event.pos):
-                                        pygame.quit()
-                                        sys.exit()
-                
-                pygame.draw.rect(screen, (255,255,0), play_btn)
-                pygame.draw.rect(screen, (255,255,0),  quit_btn)
-                play_txt = font.render("Play Again", True, (0,0,0))
-                quit_txt = font.render("Quit", True, (0,0,0))
-                screen.blit(play_txt,(125,220))
-                screen.blit(quit_txt,(395,220))
+		while running:
+			for event in pygame.event.get():
+				if event.type == pygame.MOUSEBUTTONDOWN:
+					if play_btn.collidepoint(event.pos):
+						return
+					elif quit_btn.collidepoint(event.pos):
+						pygame.quit()
+						sys.exit()
+			screen.fill((0,0,0))
+			pygame.draw.rect(screen, (255,255,0), play_btn)
+			pygame.draw.rect(screen, (255,255,0),  quit_btn)
+			play_txt = font.render("Play Again", True, (0,0,0))
+			quit_txt = font.render("Quit", True, (0,0,0))
+			screen.blit(play_txt,(125,220))
+			screen.blit(quit_txt,(395,220))
+			pygame.display.update()
+#-----------------------------------------------------------------------------GAME LOOP----------------------------------------------------------------------------------------
+
+
+#Function to for the gameplay 
+def gameplay(game_class):
+	game = game_class(player1,player2) #creating a class object
+	cellsize = 50 #defining cellsize
+	rows,columns = game.board.shape #extracting no. of rows and columns
+	running = True #variable to make sure game keeps running until exited
+	winner = None #variable to store winner's name
+	loser = None #variable to store loser's name
+
+	#Main game loop , keeps running until win,draw or exit.
+	while running:
+		#Drawing game board
+		screen.fill((100,100,100))
+		for r in range(rows):
+			for c in range(columns):
+				rect = pygame.Rect(c*cellsize + 100, r*cellsize + 100, cellsize, cellsize)
+				pygame.draw.rect(screen, (200,100,200), rect , 3)
+	
+		#Drawing the piece
+		game.draw_piece(screen,cellsize)
+
+		#Displaying which player's turn it is 
+		text = font.render(f"{game.currentturn_player()}'s turn", True, (255, 255, 255))
+		screen.blit(text,(100,30))
+		pygame.display.flip()
+		
+		#Event handling
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				pygame.quit()#close pygame window
+				sys.exit() #Exit program
+			elif event.type == pygame.MOUSEBUTTONDOWN:
+				x,y = event.pos
+				#Convert mouse click position to board coordinates
+				column = (x-100) // cellsize
+				row = (y-100) // cellsize
+				#Attempt to make a move
+				if game.make_move(row,column):
+					# Check if the game has been won or drawn 
+					result = game.check_win()
+					if result == 0:
+						# No win/draw -> switch turns
+						game.switch_turn()
+					elif result == 1:
+						#Current player wins
+						winner = game.currentturn_player()
+						loser = game.otherplayer()
+						running = False
+					else: 
+						#Draw
+						winner = "Draw"
+						running = False
+	
+	# Display the final result
+	screen.fill((0, 0, 0))
+	if winner == "Draw":
+		win_text = font.render("It's a Draw!", True, (255, 255, 0))
+	else:
+		win_text = font.render(f"{winner} wins!", True, (255, 255, 0))
+		record_result(winner,loser,game.__class__.__name__)
+	screen.blit(win_text, (150, 250))
+	pygame.display.flip()
+	
+	pygame.time.wait(3000)
+
+	#Recording game results and analytics
+	show_leaderboard()
+	plotting()
+	post_game_loop(screen)
+#----------------------------------------------------------------------------------------MAIN FUNCTION--------------------------------------------------------------------------------------
+def main():
+	#Main program: shows menu , runs selected game, repeat.
+	while True:
+		game_class = menu_loop() #Wait for the player selection
+		gameplay(game_class) #Runs the selected game
+
+#Run the program 
+if __name__ == "__main__":
+	main()
