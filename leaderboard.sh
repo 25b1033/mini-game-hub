@@ -28,9 +28,11 @@ awk -F ',' '
 NR>1 {
 	wins[$1]++
 	losses[$2]++
+	games[$1]++
+	games[$2]++
 } 
 END{
-	for(player in wins){
+	for(player in games){
 		w=wins[player] 
 		l=losses[player]
 		if(l==0)
