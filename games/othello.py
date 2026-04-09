@@ -14,7 +14,6 @@ class Othello(Gamebase):
             for c in range (8):
                 if self.checkmove(r,c):
                     return True
-        print("false")
         return False
     
     def checkmove(self,row,column):
