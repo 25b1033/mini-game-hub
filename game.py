@@ -42,10 +42,12 @@ class Gamebase(ABC):
 		pass
 	def switch_turn(self):
 		#This is a function implemented to switch turns
+		self.currentplayerindex = 1 - self.currentplayerindex
 		if self.valid_move():
-			self.currentplayerindex = 1 - self.currentplayerindex
+			return
 		else:
 			print("Player has no legal moves hence it is a pass")
+			self.currentplayerindex = 1 - self.currentplayerindex
 
 	def otherplayer(self):
 		self.other_player_index=1-self.currentplayerindex
