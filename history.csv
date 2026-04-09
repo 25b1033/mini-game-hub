@@ -1,14 +1,2 @@
 Winner,Loser,Date,Game
-player2,player1,2026-04-09,Connect4
-player1,player2,2026-04-09,TicTactoe
-player1,player2,2026-04-09,TicTactoe
-player2,player1,2026-04-09,TicTactoe
-player1,player2,2026-04-09,Connect4
-player2,player1,2026-04-09,TicTactoe
-player1,player2,2026-04-09,TicTactoe
-player1,player2,2026-04-09,TicTactoe
-player1,player2,2026-04-09,TicTactoe
-player2,player1,2026-04-09,Connect4
-player2,player1,2026-04-09,Connect4
-player1,player2,2026-04-09,TicTactoe
-player1,player2,2026-04-09,Connect4
+player1,player2,2026-04-09,Othello

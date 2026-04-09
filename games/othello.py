@@ -14,25 +14,25 @@ class Othello(Gamebase):
             for c in range (8):
                 if self.checkmove(r,c):
                     return True
+        print("false")
         return False
     
     def checkmove(self,row,column):
-        if self.board[row][column]!=0:
-            return False
-        for r in range (-1,2):
-            for c in range(-1,2):
-                ar=row+r
-                ac=column+c
-                if 0<=ac<8 and 0<=ar<8 and self.board[ar][ac]==2-self.currentplayerindex:
-                    for k in range (2,8):
-                        dr= row+k*r
-                        dc=column+k*c
-                        if not (0<=dr<8 and 0<=dc<8):
-                            break
-                        if self.board[dr][dc]==self.currentplayerindex+1:
-                            return True
-                        if self.board[dr][dc]==0:
-                            break
+        if 0<=row<8 and 0<=column<8 and self.board[row][column]==0:
+            for r in range (-1,2):
+                for c in range(-1,2):
+                    ar=row+r
+                    ac=column+c
+                    if 0<=ac<8 and 0<=ar<8 and self.board[ar][ac]==2-self.currentplayerindex:
+                        for k in range (2,8):
+                            dr= row+k*r
+                            dc=column+k*c
+                            if not (0<=dr<8 and 0<=dc<8):
+                                break
+                            if self.board[dr][dc]==self.currentplayerindex+1:
+                                return True
+                            if self.board[dr][dc]==0:
+                                break
         return False
           
     def make_move(self,row,column):
@@ -61,7 +61,9 @@ class Othello(Gamebase):
         a=self.board
         p1=a[a==1]
         p2=a[a==2]
-        if np.any(self.board==0):
+        if p1.size==0 or p2.size==0:
+            return 1
+        elif np.any(self.board==0):
             return 0
         elif p1.size==p2.size:
             return 2

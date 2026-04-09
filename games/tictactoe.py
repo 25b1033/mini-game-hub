@@ -9,7 +9,7 @@ class TicTactoe(Gamebase):
         return (self.board[0] == 0).any()
     
     def checkmove(self,row,column):
-        return row<=10 and column<=10 and self.board[row][column]==0
+        return 0<=row<10 and 0<=column<10 and self.board[row][column]==0
     
     def make_move(self,row,column):
         if self.checkmove(row,column):
