@@ -6,25 +6,26 @@ class TicTactoe(Gamebase):
         super().__init__(player1,player2,(10,10))
 
     def valid_move(self):
-        return (self.board[0] == 0).any()
+        return (self.board[0] == 0).any() #check if board is empty
     
     def checkmove(self,row,column):
-        return 0<=row<10 and 0<=column<10 and self.board[row][column]==0
+        return 0<=row<10 and 0<=column<10 and self.board[row][column]==0 #check if move is inside board
     
     def make_move(self,row,column):
         if self.checkmove(row,column):
-            self.board[row][column]=-2*self.currentplayerindex + 1
+            self.board[row][column]= - 2*self.currentplayerindex + 1 #set -1 for player with index 0 and 1 for player with index 1
             return True
         return False
     
     def check_win(self):
         t=self.board
-        row = t[:,0:6] + t[:,1:7] + t[:,2:8] + t[:,3:9] + t[:,4:]
-        col = t[0:6,:] + t[1:7,:] + t[2:8,:] + t[3:9,:] + t[4:,:]
-        diag1= t[0:6,0:6] + t[1:7,1:7] + t[2:8,2:8] + t[3:9,3:9] + t[4:,4:]
-        diag2= t[4:,0:6] + t[3:9,1:7] + t[2:8,2:8] + t[1:7,3:9] + t[0:6,4:]
+        row = t[:,0:6] + t[:,1:7] + t[:,2:8] + t[:,3:9] + t[:,4:] #sum of cells of all possible sets of 5 adjacent cells in a row
+        col = t[0:6,:] + t[1:7,:] + t[2:8,:] + t[3:9,:] + t[4:,:] #sum of cells of all possible sets of 5 adjacent cells in a col 
+        diag1= t[0:6,0:6] + t[1:7,1:7] + t[2:8,2:8] + t[3:9,3:9] + t[4:,4:] #sum of cells of all possible sets of 5 adjacent cells in a diagonal
+        diag2= t[4:,0:6] + t[3:9,1:7] + t[2:8,2:8] + t[1:7,3:9] + t[0:6,4:] #sum of cells of all possible sets of 5 adjacent cells in other diagonal
 
         #check in row
+        #win conditions occur in max or min sum
         if np.max(row)==5 or np.min(row)==-5:
             return 1
         #check in column
@@ -44,15 +45,15 @@ class TicTactoe(Gamebase):
     def draw_piece(self,screen,cellsize):
         for r in range(10):
             for c in range(10):
+                #posn to start the text
                 x = c*cellsize + 100 + cellsize//4
                 y = r*cellsize + 100 + cellsize//4
 
-                font = pygame.font.SysFont('Arial',cellsize//2)
+                font = pygame.font.SysFont('Arial',cellsize//2)# font
 
                 if self.board[r][c]==-1:
-                    o_txt=font.render("O",True,(255,255,255))
+                    o_txt=font.render("O",True,(57,255,20)) # draw O
                     screen.blit(o_txt,(x,y))
                 elif self.board[r][c]==1:
-                    x_txt=font.render("X",True,(255,255,255))
+                    x_txt=font.render("X",True,(255,255,51)) # draw X
                     screen.blit(x_txt,(x,y))
-            
