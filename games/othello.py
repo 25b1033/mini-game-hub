@@ -78,22 +78,25 @@ class Othello(Gamebase):
             self.currentplayerindex=1
             return 1
 
-    def draw_piece(self,screen,cellsize):
+    def draw(self,screen,cellsize):
         for r in range(8):
             for c in range(8):
+                b_x = c * cellsize + 80
+                b_y = r * cellsize + 80
                 #center of cell
-                x = c*cellsize + 100 + cellsize//2
-                y = r*cellsize + 100 + cellsize//2
-                rect=pygame.Rect(c*cellsize + 101,r*cellsize +101,cellsize-2,cellsize-2)#draw green board
+                x = c*cellsize + 80 + cellsize//2
+                y = r*cellsize + 80 + cellsize//2
+                rect=pygame.Rect(b_x,b_y,cellsize,cellsize)#draw green board
                 pygame.draw.rect(screen,(0,255,0),rect)
+                pygame.draw.rect(screen,(0,0,0),(b_x,b_y,cellsize,cellsize),1)#draw grid lines
                 if self.board[r][c]==2:
                     pygame.draw.circle(screen,(255,255,255),(x,y),cellsize//3) #draw a white piece
                 elif self.board[r][c]==1:
                     pygame.draw.circle(screen,(0,0,0),(x,y),cellsize//3) #draw a black piece
-                font = pygame.font.SysFont('Arial',cellsize//2) #font 
+                font = pygame.font.SysFont('Arial',50) #font 
                 a=self.board
                 text=font.render("black: "+str(a[a==1].size),True,(255,255,255)) #text for score of black
                 text2=font.render("White: "+ str(a[a==2].size),True,(255,255,255))#text for score of white
                 #display score
-                screen.blit(text,(10,10))
-                screen.blit(text2,(480,10))    
+                screen.blit(text,(80,10))
+                screen.blit(text2,(700,10))    

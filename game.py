@@ -83,9 +83,9 @@ class Gamebase(ABC):
 		pass
 
 	@abstractmethod
-	def draw_piece(self,screen,cellsize):
+	def draw(self,screen,cellsize):
 		"""
-		Abstract method for drawing piece by reading the numpy array
+		Abstract method for drawing the board and pieces
 		"""
 
 #---------------------------------------------------------------------Setting up the window-------------------------------------------------------------------------------
@@ -93,9 +93,9 @@ class Gamebase(ABC):
 pygame.init()
 
 #Set up the window
-screen = pygame.display.set_mode((600, 600))
+screen = pygame.display.set_mode((500, 500))
 pygame.display.set_caption("MINI GAME HUB")
-font = pygame.font.Font(None, 40)
+font = pygame.font.Font(None, 50)
 
 #----------------------------------------------------------------------------GAME MENU-----------------------------------------------------------------------------------
 
@@ -104,18 +104,23 @@ def show_menu():
 	screen.fill((0,0,0)) #black background
 
 	#Hardcoded buttons
-	rect1 = pygame.Rect(200, 100, 200, 100)
-	rect2 = pygame.Rect(200, 250, 200, 100)
-	rect3 = pygame.Rect(200, 400, 200, 100)
+	rect1 = pygame.Rect(100, 50, 300, 100)
+	rect2 = pygame.Rect(100, 200, 300, 100)
+	rect3 = pygame.Rect(100, 350, 300, 100)
 
 	pygame.draw.rect(screen, (100,200,100) , rect1)
 	pygame.draw.rect(screen, (100,200,100) , rect2)
 	pygame.draw.rect(screen, (100,200,100) , rect3)
 
-	# Blitting by creating a surface with required text
-	screen.blit(font.render("TicTacToe", True, (0,0,0)),(rect1.x + 50, rect1.y + 30))
-	screen.blit(font.render("Connect4", True, (0,0,0)), (rect2.x + 50, rect2.y + 30))
-	screen.blit(font.render("Othello" , True, (0,0,0)), (rect3.x + 50, rect3.y + 30))
+	#creating a surface with required text
+	text1 = font.render("TicTacToe", True, (0,0,0))
+	text2 = font.render("Connect4" , True, (0,0,0))
+	text3 = font.render("Othello"  , True, (0,0,0))
+
+	#blitting the text at the center od the rectangles
+	screen.blit(text1, text1.get_rect(center=rect1.center))
+	screen.blit(text2, text2.get_rect(center=rect2.center))
+	screen.blit(text3, text3.get_rect(center=rect3.center))
 
 	pygame.display.flip()
 	
@@ -242,12 +247,12 @@ def plotting():
 
 #post-game loop---------------------------------------------------------------------------------------------------------------------------------
 def post_game_loop(screen):
-		screen = pygame.display.set_mode((600, 600))
+		screen = pygame.display.set_mode((600, 160))
 		pygame.display.set_caption("PLAY AGAIN")
 		font = pygame.font.SysFont('Arial',20)#define font for display
 		running=True
-		play_btn=pygame.Rect(100,200,150,60)
-		quit_btn=pygame.Rect(350,200,150,60)
+		play_btn=pygame.Rect(100,50,150,60)
+		quit_btn=pygame.Rect(350,50,150,60)
 
 		while running:
 			for event in pygame.event.get():
@@ -262,38 +267,37 @@ def post_game_loop(screen):
 			pygame.draw.rect(screen, (255,255,0),  quit_btn)
 			play_txt = font.render("Play Again", True, (0,0,0))
 			quit_txt = font.render("Quit", True, (0,0,0))
-			screen.blit(play_txt,(125,220))
-			screen.blit(quit_txt,(395,220))
+			screen.blit(play_txt,play_txt.get_rect(center=play_btn.center))
+			screen.blit(quit_txt,quit_txt.get_rect(center=quit_btn.center))
 			pygame.display.update()
 #-----------------------------------------------------------------------------GAME LOOP----------------------------------------------------------------------------------------
 
 
 #Function to for the gameplay 
 def gameplay(game_class):
+	#Creatinga new window for the games
+	pygame.display.quit()
+	pygame.display.init()
+	screen = pygame.display.set_mode((1000,1000))
+	pygame.display.set_caption(game_class.__name__) #setting the title to the game name
+
 	game = game_class(player1,player2) #creating a class object
-	cellsize = 50 #defining cellsize
 	rows,columns = game.board.shape #extracting no. of rows and columns
+	cellsize = 840 // rows
 	running = True #variable to make sure game keeps running until exited
 	winner = None #variable to store winner's name
 	loser = None #variable to store loser's name
 
 	#Main game loop , keeps running until win,draw or exit.
 	while running:
-		#Drawing game board
-		screen.fill((100,100,100))
-		for r in range(rows):
-			for c in range(columns):
-				rect = pygame.Rect(c*cellsize + 100, r*cellsize + 100, cellsize, cellsize)
-				pygame.draw.rect(screen, (200,100,200), rect , 3)
-	
-		#Drawing the piece
-		game.draw_piece(screen,cellsize)
 
-		#Displaying which player's turn it is 
+		#Drawing game board and the pieces
+		screen.fill((0,0,0))
+		game.draw(screen,cellsize)
+		#Displaying which player's turn it is
 		text = font.render(f"{game.currentturn_player()}'s turn", True, (255, 255, 255))
-		screen.blit(text,(100,30))
+		screen.blit(text,(375,30))
 		pygame.display.flip()
-		
 		#Event handling
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
@@ -302,8 +306,8 @@ def gameplay(game_class):
 			elif event.type == pygame.MOUSEBUTTONDOWN:
 				x,y = event.pos
 				#Convert mouse click position to board coordinates
-				column = (x-100) // cellsize
-				row = (y-100) // cellsize
+				column = (x-80) // cellsize
+				row = (y-80) // cellsize
 				#Attempt to make a move
 				if game.make_move(row,column):
 					# Check if the game has been won or drawn 
@@ -320,7 +324,6 @@ def gameplay(game_class):
 						#Draw
 						winner = "Draw"
 						running = False
-	
 	# Display the final result
 	screen.fill((0, 0, 0))
 	if winner == "Draw":
@@ -331,7 +334,7 @@ def gameplay(game_class):
 	screen.blit(win_text, (150, 250))
 	pygame.display.flip()
 	
-	pygame.time.wait(3000)
+	pygame.time.wait(1000)
 
 	#Recording game results and analytics
 	show_leaderboard()

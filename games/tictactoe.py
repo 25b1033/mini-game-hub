@@ -42,18 +42,23 @@ class TicTactoe(Gamebase):
         else:
             return 0
 
-    def draw_piece(self,screen,cellsize):
+    def draw(self,screen,cellsize):
         for r in range(10):
             for c in range(10):
-                #posn to start the text
-                x = c*cellsize + 100 + cellsize//4
-                y = r*cellsize + 100 + cellsize//4
+                #draw the board
+                b_x = 80 + c * cellsize
+                b_y = 80 + r * cellsize
+                pygame.draw.rect(screen,(255,255,255),(b_x,b_y,cellsize,cellsize),2)
+
+		#posn to start the text
+                x = c*cellsize + 80 + cellsize//4
+                y = r*cellsize + 80 + cellsize//4
 
                 font = pygame.font.SysFont('Arial',cellsize//2)# font
 
                 if self.board[r][c]==-1:
-                    o_txt=font.render("O",True,(57,255,20)) # draw O
+                    o_txt=font.render("O",True,(79,245,0)) # draw O
                     screen.blit(o_txt,(x,y))
                 elif self.board[r][c]==1:
-                    x_txt=font.render("X",True,(255,255,51)) # draw X
+                    x_txt=font.render("X",True,(245,74,0)) # draw X
                     screen.blit(x_txt,(x,y))
