@@ -1,0 +1,105 @@
+\documentclass{article}
+\usepackage{hyperref}
+
+\title{MINI GAME HUB REPORT}
+\date{April 2026}
+\author{}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Introduction}
+This project implements a secure, multi-user game hub that integrates Bash scripting for authentication and Python (Pygame) for gameplay. Two authenticated players can select a game from a menu and play via a graphical interface. The hub supports three games --- Tic-Tac-Toe, Othello, and Connect Four --- each rendered using Pygame with boards represented as NumPy arrays.
+
+\section{Libraries and Modules used}
+\begin{enumerate}
+    \item \textbf{numpy} - Used to represent all game boards as arrays and perform win condition checks using array operations and slicing.
+    \item \textbf{pygame} - Used to render the game menu and all gameplay via a graphical interface window.
+    \item \textbf{matplotlib} - Used to display a bar chart of top players and a pie chart of most played games after each session.
+    \item \textbf{pathlib} - Used to read and write \texttt{history.csv} for recording game results.
+    \item \textbf{sys} - Used to accept command-line arguments (player usernames) passed from \texttt{main.sh} to \texttt{game.py}.
+    \item \textbf{subprocess} - Used to call \texttt{leaderboard.sh} from within \texttt{game.py} after each game.
+    \item \textbf{datetime} - Used to record the date of each game result in \texttt{history.csv}.
+    \item \textbf{abc} - Used to define the abstract base class for all games.
+    \item \textbf{collections} - Used to count frequencies for the matplotlib charts.
+\end{enumerate}
+
+\section{Features implemented}
+\begin{itemize}
+    \item \textbf{User Authentication} - Two players are prompted to 
+    enter their username and password. Passwords are hashed using 
+    SHA-256 before being stored in \texttt{users.tsv}. New users can 
+    register directly from the login prompt.
+    
+    \item \textbf{Game Menu} - After authentication, both players are 
+    presented with a Pygame GUI menu to select from three available games.
+
+    \item \textbf{Tic-Tac-Toe} - Played on a 10×10 board where players 
+    need 5 marks in a row to win, rendered using Pygame.
+
+    \item \textbf{Othello (Reversi)} - Played on an 8×8 board with 
+    standard Othello rules including disc flipping and turn skipping, 
+    rendered using Pygame.
+
+    \item \textbf{Connect Four} - Played on a 7×7 grid where coins 
+    fall to the lowest empty row, with coins changing colour every 
+    move, rendered using Pygame.
+
+    \item \textbf{Result Recording} - After each game, the winner, 
+    loser, date, and game name are appended to \texttt{history.csv}.
+
+    \item \textbf{Leaderboard} - \texttt{leaderboard.sh} reads 
+    \texttt{history.csv} and displays a formatted table of wins, 
+    losses, and win/loss ratio per player per game.
+
+    \item \textbf{Statistics Visualisation} - Matplotlib charts are 
+    displayed after each game showing the top 5 players by wins and 
+    most played games.
+
+    \item \textbf{Post-Game Loop} - Players are prompted to play 
+    another game or quit after viewing the statistics.
+\end{itemize}
+
+\section{Code logic}
+\subsection{Authentication}
+\subsection{Base class}
+\subsection{Tic-Tac-Toe}
+The TicTactoe class inherits from Gamebase and initializes a 10x10 numpy board.\\\\
+\texttt{valid\_move} checks if the board is empty for move.\\\\
+\texttt{checkmove} checks if the move is inside the board.\\\\
+\texttt{make\_move} places the X and O according to player.\\\\
+\texttt{check\_win} uses NumPy array slicing to check all possible sets of 5 adjacent cells in every direction --- rows, columns, diagonals, and anti-diagonals. It sums each set of 5 cells; a sum of 5 means player 1 has won and a sum of -5 means player 2 has won. If no winner is found and no valid moves remain, the game is a draw.
+\texttt{draw} draws a white grid on screen, saffron Xs and green Os on a Pygame window.
+\subsection{Connect Four}
+\subsection{Othello}
+The Othello class inherits from Gamebase and initializes a 8x8 numpy board with four center pieces.\\\\
+\texttt{checkmove} checks if placing a disc at a given cell traps opponent's pieces.\\\\
+\texttt{valid\_move} calls checkmove for each cell to determine atleast one move exists for the player.\\\\
+\texttt{make\_move} places the disc and flips all trapped discs of opponent in every valid direction.\\\\
+\texttt{check\_win} uses Numpy filtering to count total number of discs of each player and decide the winner when the board is full.
+\texttt{draw} draws a green board, white, and black discs and displays live score on a Pygame window.
+\subsection{Leaderboard}
+The \texttt{leaderboard.sh} accepts a sorting metric as command line argument from \texttt{game.py} --- either wins, losses or ratio.\\\\ 
+It checks whether \texttt{history.csv} exists and exits with a message if it does not exist.\\\\
+Based on the sorting metric it chooses an appropriate column for sorting --- wins map to column 2, losses to column 3, and ratio to column 4.\\\\
+The script then uses \texttt{awk} to parse \texttt{history.csv} skipping the header row. For each record it increments the win count of winner and loss count of loser. After processing all records it then calculates win/loss ratio for each player --- if a player has no losses the ratio is taken as wins to avoid division by zero.\\\\
+The output is piped through \texttt{sort} to sort the data by selected metric in descending order and then passed through another \texttt{awk} pipeline to format the data and align it with header in leaderboard.
+
+\section{Hurdles faced}
+
+\section{What would I do differently?}
+
+\section{Bibliography}
+\begin{thebibliography}{9}
+\bibitem{sha256} SHA-256 in Bash: sha256sum command
+\bibitem{pygame} PYGAME CE Documentation: \url{https://pyga.me}
+\bibitem{inheritance} Python Inheritance: \url{https://docs.python.org/3/tutorial/classes.html}
+\bibitem{othello}Othello Rules: \url{https://worldothello.org}
+\bibitem{connect4}Connect4 Rules: \url{https://boardgamegeek.com/boardgame/2719/connect-four}
+\bibitem{numpy}Numpy Documentation: \url{https://numpy.org/doc/2.4/}
+\end{thebibliography}
+
+\end{document}
