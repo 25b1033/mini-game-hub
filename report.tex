@@ -65,7 +65,33 @@ This project implements a secure, multi-user game hub that integrates Bash scrip
 
 \section{Code logic}
 \subsection{Authentication}
+The \texttt{main.sh} handles user authentication before launching the game engine. It prompts for two distinct usernames\\\\
+\texttt{hash\_password} hashes the password given by std input using the \texttt{SHA-256} hash. \\\\
+\texttt{register\_user} allows a new user to create an account.\\
+It ensures the username is non-empty and unique.\\
+It trims extra spaces from the username input.\\
+It enforces a minimum password length and confirms the password before storing it.\\
+It stores the username and hashed password in \texttt{users.tsv}.\\\\
+\texttt{authenticate\_user} handles existing user log in.\\
+It checks if the username exists in \texttt{users.tsv}.\\
+It verifies the password by hashing and comparing it with the stored value respective to that username.\\
+If the user doesn't exist it allows the user to register.\\\\
+Distinct user check ensures that both authenticated users are distinct.\\\\
+After successful authentication, \texttt{game.py} is called with both usernames as arguments.
+
 \subsection{Base class}
+The Gamebase class represents a generic two-player turn-based board game.\\
+It stores player names in an array, the game board as an Numpy array, and current player's index.\\\\
+\texttt{init} initialises the players, sets the starting player, and creates the board using the given shape.\\\\
+\texttt{valid\_move} is an abstract method that checks if the next player has any valid moves on the board.\\\\
+\texttt{switch\_turn} alternates the current player. If the next player doesn't have any valid moves the turn is passed back to the current player.\\\\
+\texttt{otherplayer} returns the name of the opponent.\\\\
+\texttt{currentturn\_player} returns the name of the player whose turn it is.\\\\
+\texttt{check\_win} is an abstract method to determine if the game is won or drawn\\\\
+\texttt{checkmove} is an abstract method to check if the move made by the player is valid or not.\\\\
+\texttt{make\_move} is an abstract method to make a move if the move is valid.\\\\
+\texttt{draw} is an abstract method to draw game board and pieces specific to each game on the screen.
+
 \subsection{Tic-Tac-Toe}
 The TicTactoe class inherits from Gamebase and initializes a 10x10 numpy board.\\\\
 \texttt{valid\_move} checks if the board is empty for move.\\\\
@@ -74,6 +100,12 @@ The TicTactoe class inherits from Gamebase and initializes a 10x10 numpy board.\
 \texttt{check\_win} uses NumPy array slicing to check all possible sets of 5 adjacent cells in every direction --- rows, columns, diagonals, and anti-diagonals. It sums each set of 5 cells; a sum of 5 means player 1 has won and a sum of -5 means player 2 has won. If no winner is found and no valid moves remain, the game is a draw.
 \texttt{draw} draws a white grid on screen, saffron Xs and green Os on a Pygame window.
 \subsection{Connect Four}
+The Connect4 class inherits from Gamebase and initializes a 7x7 numpy board.\\\\
+\texttt{valid\_move} checks if the column is empty for the move.\\\\
+\texttt{checkmove} checks if the move is inside the board.\\\\
+\texttt{make\_move} places the pieces according to player.\\\\
+\texttt{check\_win} uses NumPy array slicing to check all possible sets of four adjacent cells in every direction --- rows, columns, diagonals, and anti-diagonals. It sums each set of four cells; a sum of 4 means player 1 has won and a sum of -4 means player 2 has won. If no winner is found and no valid moves remain, the game is a draw.\\\\
+\texttt{draw} draws blue board with holes on the screen, saffron and bright yellow pieces on the pygame window.
 \subsection{Othello}
 The Othello class inherits from Gamebase and initializes a 8x8 numpy board with four center pieces.\\\\
 \texttt{checkmove} checks if placing a disc at a given cell traps opponent's pieces.\\\\

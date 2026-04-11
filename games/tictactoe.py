@@ -6,7 +6,7 @@ class TicTactoe(Gamebase):
         super().__init__(player1,player2,(10,10))
 
     def valid_move(self):
-        return (self.board[0] == 0).any() #check if board is empty
+        return (self.board == 0).any() #check if board is empty
     
     def checkmove(self,row,column):
         return 0<=row<10 and 0<=column<10 and self.board[row][column]==0 #check if move is inside board
