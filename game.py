@@ -101,6 +101,8 @@ font = pygame.font.Font(None, 50)
 
 #Function to display main menu with three game buttons
 def show_menu():
+	screen = pygame.display.set_mode((500, 500))
+	pygame.display.set_caption("MINI GAME HUB")
 	screen.fill((0,0,0)) #black background
 
 	#Hardcoded buttons
@@ -276,8 +278,6 @@ def post_game_loop(screen):
 #Function to for the gameplay 
 def gameplay(game_class):
 	#Creatinga new window for the games
-	pygame.display.quit()
-	pygame.display.init()
 	screen = pygame.display.set_mode((1000,1000))
 	pygame.display.set_caption(game_class.__name__) #setting the title to the game name
 
