@@ -62,10 +62,10 @@ class Othello(Gamebase):
         p1=a[a==1]#array of '1's that appear in board
         p2=a[a==2]#array of '2's that appear in board
         if p1.size==0:
-            self.currentplayerindex= 0#to set current player to the winning player
+            self.currentplayerindex= 1#to set current player to the winning player
             return 1
         elif p2.size==0:
-            self.currentplayerindex=1#to set current player to winning player
+            self.currentplayerindex=0#to set current player to winning player
             return 1
         elif np.any(self.board==0):
             return 0#no draw conditions

@@ -258,6 +258,9 @@ def post_game_loop(screen):
 
 		while running:
 			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					pygame.quit() #close pygame window
+					sys.exit() #Exit program
 				if event.type == pygame.MOUSEBUTTONDOWN:
 					if play_btn.collidepoint(event.pos):
 						return
