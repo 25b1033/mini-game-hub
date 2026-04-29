@@ -1,6 +1,5 @@
 \documentclass{article}
-\usepackage{hyperref}
-
+\usepackage[hidelinks]{hyperref}
 \title{MINI GAME HUB REPORT}
 \date{April 2026}
 \author{}
@@ -14,7 +13,7 @@
 \section{Introduction}
 This project implements a secure, multi-user game hub that integrates Bash scripting for authentication and Python (Pygame) for gameplay. Two authenticated players can select a game from a menu and play via a graphical interface. The hub supports three games, Tic-Tac-Toe, Othello, and Connect Four, each rendered using Pygame with boards represented as NumPy arrays.
 
-\section{Libraries and Modules used}
+\section{External Libraries}
 \begin{description}
     \item[numpy] Used to represent all game boards as arrays and perform win condition checks using array operations and slicing.
     \item[pygame] Used to render the game menu and all gameplay via a graphical interface window.
@@ -27,10 +26,14 @@ This project implements a secure, multi-user game hub that integrates Bash scrip
     \item[collections] Used to count frequencies for the matplotlib charts.
 \end{description}
 
+\section{Design \& Architecture}
+\subsection{System structure}
+\subsection{Major Components}
+\subsection{Design decisions}
 \section{Features implemented}
 \begin{description}
-    \item[User Authentication] Two players are prompted to 
-    enter their username and password. Passwords are hashed using 
+    \item[User Authentication] Two players are asked to
+ enter their username and password. Passwords are hashed using 
     SHA-256 before being stored in \texttt{users.tsv}. New users can 
     register directly from the login prompt.
     
@@ -45,7 +48,7 @@ This project implements a secure, multi-user game hub that integrates Bash scrip
     rendered using Pygame.
 
     \item[Connect Four] Played on a 7×7 grid where coins 
-    fall to the lowest empty row, with coins changing colour every 
+    fall to the lowest empty row, with coins changing color every 
     move, rendered using Pygame.
 
     \item[Result Recording] After each game, the winner, 
@@ -56,75 +59,91 @@ This project implements a secure, multi-user game hub that integrates Bash scrip
     losses, and win/loss ratio per player per game.
 
     \item[Statistics Visualisation] Matplotlib charts are 
-    displayed after each game showing the top 5 players by wins and 
+    displayed after each game, showing the top 5 players by wins and 
     most played games.
 
     \item[Post-Game Loop] Players are prompted to play 
     another game or quit after viewing the statistics.
 \end{description}
 
-\section{Code logic}
-\subsection{Authentication}
-The \texttt{main.sh} handles user authentication before launching the game engine. It prompts for two distinct usernames\\\\
-\texttt{hash\_password} hashes the password given by std input using the \texttt{SHA-256} hash. \\\\
-\texttt{register\_user} allows a new user to create an account.\\
-It ensures the username is non-empty and unique.\\
-It trims extra spaces from the username input.\\
-It enforces a minimum password length and confirms the password before storing it.\\
-It stores the username and hashed password in \texttt{users.tsv}.\\\\
-\texttt{authenticate\_user} handles existing user log in.\\
-It checks if the username exists in \texttt{users.tsv}.\\
-It verifies the password by hashing and comparing it with the stored value respective to that username.\\
-If the user doesn't exist it allows the user to register.\\\\
-Distinct user check ensures that both authenticated users are distinct.\\\\
-After successful authentication, \texttt{game.py} is called with both usernames as arguments.
+\section{Directory Structure}
+\begin{verbatim}
+mini-game-hub/
+|--main.sh           #Handles user authentication and starts the game
+|--game.py           #Main controller that manages game flow and user interaction.
+|--leaderboard.sh    #Processes game history and displays game stats
+|
+|--games/
+|   |--tictactoe.py  #Implements Tictactoe game logic
+|   |--othello.py    #Implements othello game logic
+|   |--connect4.py   #Implements Connect game logic
+|       
+|--users.tsv         #Stores user login credentials (hashed passwords)
+|--history.csv       #Stores game results for leaderboard and analysis
+\end{verbatim}
 
-\subsection{Base class}
-The Gamebase class represents a generic two-player turn-based board game.\\
-It stores player names in an array, the game board as an Numpy array, and current player's index.\\\\
-\texttt{init} initialises the players, sets the starting player, and creates the board using the given shape.\\\\
-\texttt{valid\_move} is an abstract method that checks if the next player has any valid moves on the board.\\\\
-\texttt{switch\_turn} alternates the current player. If the next player doesn't have any valid moves the turn is passed back to the current player.\\\\
-\texttt{otherplayer} returns the name of the opponent.\\\\
-\texttt{currentturn\_player} returns the name of the player whose turn it is.\\\\
-\texttt{check\_win} is an abstract method to determine if the game is won or drawn\\\\
-\texttt{checkmove} is an abstract method to check if the move made by the player is valid or not.\\\\
-\texttt{make\_move} is an abstract method to make a move if the move is valid.\\\\
-\texttt{draw} is an abstract method to draw game board and pieces specific to each game on the screen.
+\section{Installation \& Setup}
+The project requires Python 3.10, Bash, and the following Python libraries:
+\begin{itemize}
+    \item NumPy
+    \item Pygame
+    \item Matplotlib
+\end{itemize}
 
-\subsection{Tic-Tac-Toe}
-The TicTactoe class inherits from Gamebase and initializes a 10x10 numpy board.\\\\
-\texttt{valid\_move} checks if the board is empty for move.\\\\
-\texttt{checkmove} checks if the move is inside the board.\\\\
-\texttt{make\_move} places the X and O according to player.\\\\
-\texttt{check\_win} uses NumPy array slicing to check all possible sets of 5 adjacent cells in every direction --- rows, columns, diagonals, and anti-diagonals. It sums each set of 5 cells; a sum of 5 means player 1 has won and a sum of -5 means player 2 has won. If no winner is found and no valid moves remain, the game is a draw.
-\texttt{draw} draws a white grid on screen, saffron Xs and green Os on a Pygame window.
-\subsection{Connect Four}
-The Connect4 class inherits from Gamebase and initializes a 7x7 numpy board.\\\\
-\texttt{valid\_move} checks if the column is empty for the move.\\\\
-\texttt{checkmove} checks if the move is inside the board.\\\\
-\texttt{make\_move} places the pieces according to player.\\\\
-\texttt{check\_win} uses NumPy array slicing to check all possible sets of four adjacent cells in every direction --- rows, columns, diagonals, and anti-diagonals. It sums each set of four cells; a sum of 4 means player 1 has won and a sum of -4 means player 2 has won. If no winner is found and no valid moves remain, the game is a draw.\\\\
-\texttt{draw} draws blue board with holes on the screen, saffron and bright yellow pieces on the pygame window.
-\subsection{Othello}
-The Othello class inherits from Gamebase and initializes a 8x8 numpy board with four center pieces.\\\\
-\texttt{checkmove} checks if placing a disc at a given cell traps opponent's pieces.\\\\
-\texttt{valid\_move} calls checkmove for each cell to determine atleast one move exists for the player.\\\\
-\texttt{make\_move} places the disc and flips all trapped discs of opponent in every valid direction.\\\\
-\texttt{check\_win} uses Numpy filtering to count total number of discs of each player and decide the winner when the board is full.
-\texttt{draw} draws a green board, white, and black discs and displays live score on a Pygame window.
-\subsection{Leaderboard}
-The \texttt{leaderboard.sh} accepts a sorting metric as command line argument from \texttt{game.py} --- either wins, losses or ratio.\\\\ 
-It checks whether \texttt{history.csv} exists and exits with a message if it does not exist.\\\\
-Based on the sorting metric it chooses an appropriate column for sorting --- wins map to column 2, losses to column 3, and ratio to column 4.\\\\
-The script then uses \texttt{awk} to parse \texttt{history.csv} skipping the header row. For each record it increments the win count of winner and loss count of loser. After processing all records it then calculates win/loss ratio for each player --- if a player has no losses the ratio is taken as wins to avoid division by zero.\\\\
-The output is piped through \texttt{sort} to sort the data by selected metric in descending order and then passed through another \texttt{awk} pipeline to format the data and align it with header in leaderboard.
+These can be installed using:
+\begin{verbatim}
+pip install pygame-ce numpy matplotlib
+\end{verbatim}
 
-\section{Hurdles faced}
+\begin{itemize}
+    \item Ensure all project files are present in the same directory.
+    \item Provide execution permissions to the scripts:
+\end{itemize}
 
-\section{What would I do differently?}
-If I had additional 10 hours, I would focus on refining the base class and enhancing the overall structure of the code to make it more modular and extensible. I would also work on maintaining the consistency of the variable naming to make the code more readable, easier to understand, and maintain. I would also try to enhance the design and visual aspects of the game components. In addition, I would consider adding more features to the authentication system to enhance usability.\\\\
-Apart from that, I would add an option of multiple themes for background,board and pieces. This game lacks the feature of switching player turn(first player remains same) after play again. So i would like to add a feature which asks if users want to switch player turn.qz
+\begin{verbatim}
+chmod +x main.sh
+chmod +x leaderboard.sh
+\end{verbatim}
+
+\section{Usage}
+Open terminal in project directory and execute
+\texttt{bash main.sh}
+This command initializes the system and begins the user input process.
+\subsection{Login}
+\begin{itemize}
+    \item Upon execution the system displays welcome message.
+    \item The user is prompted to enter username (and password).
+    \item After successful login the system automatically proceeds to the game interface.
+\end{itemize}
+\subsection{Main Menu interaction}
+\begin{itemize}
+    \item A graphical window using pygame appears. It contains available games
+    \item Clicking on the game options will launch the selected game with a small delay.
+\end{itemize}
+\subsection{Gameplay}
+\begin{itemize}
+    \item The selected game runs within the application.
+    \item Players interact locally on the same system.
+\end{itemize}
+\subsection{Post-game}
+\begin{itemize}
+    \item After the game is over the same window first display the name of the winner (its a draw in case of draw)
+    \item Immediately after that a leaderboard is displayed on the terminal
+    \item Simultaneously, a pop-up appears and the user selects the metric to view (e.g., wins, losses, draws, ratio).
+    \item Based on the selected metric, player statistics are displayed.
+\end{itemize}
+\subsection{Exit}
+\begin{itemize}
+    \item A window appears to replay or exit the game.
+    \item The user can replay by clicking on play again, which displays main menu again.
+    \item The user can exit the window by clicking quit and this returns you back to the terminal
+\end{itemize}
+\section{Retrospective}
+\subsection{Hurdles faced}
+
+\subsection{What would I do differently?}
+If I had additional 10 hours, I would focus on refining the base class and enhancing the overall structure of the code to make it more modular and extensible. I would also work to maintain the consistency of the variable naming to make the code more readable, easier to understand, and maintain. I would also try to enhance the design and visual aspects of the game components. In addition, I would consider adding more features to the authentication system to enhance usability.\\\\
+Apart from that, I would add an option of multiple themes for background, board, and pieces. This game lacks the feature of switching player turn(first player remains unchanged) after play again. So i would like to add a feature that asks if the users want to switch player turn. I would also work towards resizable pygame window.
 
 \begin{thebibliography}{9}
 \bibitem{sha256} SHA-256 in Bash: sha256sum command
@@ -136,3 +155,4 @@ Apart from that, I would add an option of multiple themes for background,board a
 \end{thebibliography}
 
 \end{document}
+
