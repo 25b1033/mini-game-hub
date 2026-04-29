@@ -1,4 +1,4 @@
-\documentclass{article}
+\documentclass[12pt]{article}
 \usepackage[hidelinks]{hyperref}
 \title{MINI GAME HUB REPORT}
 \date{April 2026}
@@ -28,15 +28,40 @@ This project implements a secure, multi-user game hub that integrates Bash scrip
 
 \section{Design \& Architecture}
 \subsection{System structure}
+The Mini Game Hub consists of two main parts: authentication and game execution.\\\\
+The system starts with a Bash script (\texttt{main.sh}) which handles user login and registration. After successful authentication of two users, it runs the Python program (\texttt{game.py}).\\\\
+The Python program displays the menu, allows users to select and play games, and shows the results after each game. The results are also stored in files for leaderboard purposes.\\\\
+Overall flow:
+\begin{itemize}
+\item User authentication (Bash)
+\item Game selection and execution (Python)
+\item Result display and storage
+\end{itemize}
+
 \subsection{Major Components}
+\begin{description}
+\item[Authentication Module (main.sh)] Handles user login and registration using stored credentials.
+\item[Game Engine (game.py)] Controls menu display, user interaction, game execution, and result display using Pygame.
+\item[Game Modules] Each game (Tic-Tac-Toe, Othello, Connect4) is implemented separately with its own logic.
+\item[Leaderboard/History] Stores and displays game results.
+\item[Data Storage] 
+\begin{itemize}
+\item \texttt{users.tsv} for user data
+\item \texttt{history.csv} for game results
+\end{itemize}
+\end{description}
 \subsection{Design decisions}
+Bash is used for authentication because it is simple for handling files and user input. Python is used for game implementation as it supports better logic handling and graphical display using Pygame.\\\\
+File-based storage is used instead of a database because it is simple and sufficient for this project.\\\\
+A modular design is used for games so that new games can be added easily and the system remains organized.\\\\
+Passwords are stored in hashed form to improve security.
 \section{Features implemented}
 \begin{description}
     \item[User Authentication] Two players are asked to
  enter their username and password. Passwords are hashed using 
     SHA-256 before being stored in \texttt{users.tsv}. New users can 
     register directly from the login prompt.
-    
+
     \item[Game Menu] After authentication, both players are 
     presented with a Pygame GUI menu to select from three available games.
 
@@ -140,10 +165,14 @@ This command initializes the system and begins the user input process.
 \end{itemize}
 \section{Retrospective}
 \subsection{Hurdles faced}
-
+The biggest challenge faced was dividing the work equally and independent of each other especially for \texttt{game.py}.\\\\
+One of the hurdles faced was different styles of writing code and assigning variables. It was difficult to understand each other’s code and then debugging errors.\\\\
+Another hurdle we faced was small game logic errors which we found by playing the games a lot of times trying to create all possible situations that could happen in the game.
 \subsection{What would I do differently?}
 If I had additional 10 hours, I would focus on refining the base class and enhancing the overall structure of the code to make it more modular and extensible. I would also work to maintain the consistency of the variable naming to make the code more readable, easier to understand, and maintain. I would also try to enhance the design and visual aspects of the game components. In addition, I would consider adding more features to the authentication system to enhance usability.\\\\
 Apart from that, I would add an option of multiple themes for background, board, and pieces. This game lacks the feature of switching player turn(first player remains unchanged) after play again. So i would like to add a feature that asks if the users want to switch player turn. I would also work towards resizable pygame window.
+
+\newpage
 
 \begin{thebibliography}{9}
 \bibitem{sha256} SHA-256 in Bash: sha256sum command
@@ -155,4 +184,3 @@ Apart from that, I would add an option of multiple themes for background, board,
 \end{thebibliography}
 
 \end{document}
-
