@@ -88,13 +88,7 @@ class Gamebase(ABC):
 		Abstract method for drawing the board and pieces
 		"""
 
-#---------------------------------------------------------------------Setting up the window-------------------------------------------------------------------------------
-#initialise pygame
 pygame.init()
-
-#Set up the window
-screen = pygame.display.set_mode((500, 500))
-pygame.display.set_caption("MINI GAME HUB")
 font = pygame.font.Font(None, 50)
 
 #----------------------------------------------------------------------------GAME MENU-----------------------------------------------------------------------------------
@@ -103,6 +97,7 @@ font = pygame.font.Font(None, 50)
 def show_menu():
 	screen = pygame.display.set_mode((500, 500))
 	pygame.display.set_caption("MINI GAME HUB")
+	
 	screen.fill((0,0,0)) #black background
 
 	#Hardcoded buttons
@@ -281,12 +276,12 @@ def post_game_loop(screen):
 #Function to for the gameplay 
 def gameplay(game_class):
 	#Creatinga new window for the games
-	screen = pygame.display.set_mode((1000,1000))
+	screen = pygame.display.set_mode((800,800))
 	pygame.display.set_caption(game_class.__name__) #setting the title to the game name
 
 	game = game_class(player1,player2) #creating a class object
 	rows,columns = game.board.shape #extracting no. of rows and columns
-	cellsize = 840 // rows
+	cellsize = 600 // rows
 	running = True #variable to make sure game keeps running until exited
 	winner = None #variable to store winner's name
 	loser = None #variable to store loser's name
@@ -299,7 +294,7 @@ def gameplay(game_class):
 		game.draw(screen,cellsize)
 		#Displaying which player's turn it is
 		text = font.render(f"{game.currentturn_player()}'s turn", True, (255, 255, 255))
-		screen.blit(text,(375,30))
+		screen.blit(text,(275,30))
 		pygame.display.flip()
 		#Event handling
 		for event in pygame.event.get():
@@ -309,8 +304,8 @@ def gameplay(game_class):
 			elif event.type == pygame.MOUSEBUTTONDOWN:
 				x,y = event.pos
 				#Convert mouse click position to board coordinates
-				column = (x-80) // cellsize
-				row = (y-80) // cellsize
+				column = (x-100) // cellsize
+				row = (y-100) // cellsize
 				#Attempt to make a move
 				if game.make_move(row,column):
 					# Check if the game has been won or drawn 

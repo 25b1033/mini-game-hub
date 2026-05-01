@@ -63,15 +63,15 @@ class Connect4(Gamebase):
 		#Drawing the game board
 		for r in range(7):
 			for c in range(7):
-				x = 80 + c * cellsize
-				y = 80 + r * cellsize
+				x = 100 + c * cellsize
+				y = 100 + r * cellsize
 				pygame.draw.rect(screen,(62,103,154),(x,y,cellsize,cellsize))
 				pygame.draw.circle(screen,(0,0,0),(x+cellsize//2,y+cellsize//2),cellsize//2 -5)
 				
 				#Draw the pieces
 				if self.board[r][c] != 0:
-					center_x = c*cellsize + 80 + cellsize//2
-					center_y = r*cellsize + 80 + cellsize//2
+					center_x = c*cellsize + 100 + cellsize//2
+					center_y = r*cellsize + 100 + cellsize//2
 					
 					if self.board[r][c] == 1:
 						pygame.draw.circle(screen,(255,231,49),(center_x,center_y),cellsize//2 - 5)

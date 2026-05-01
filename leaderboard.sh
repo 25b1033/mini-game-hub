@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #store argument
-isort_by=$1
+sort_by=$1
 
 #check if any game is played in history.csv
 if [ ! -f history.csv ]; then

@@ -4,6 +4,8 @@ import numpy as np
 class TicTactoe(Gamebase):
     def __init__(self,player1,player2,):
         super().__init__(player1,player2,(10,10))
+        self.move_count = [0,0]
+        self.empty_index=np.arange(101)
 
     def valid_move(self):
         return (self.board == 0).any() #check if board is empty
@@ -13,7 +15,16 @@ class TicTactoe(Gamebase):
     
     def make_move(self,row,column):
         if self.checkmove(row,column):
-            self.board[row][column]= - 2*self.currentplayerindex + 1 #set -1 for player with index 0 and 1 for player with index 1
+            a=self.empty_index
+            if self.move_count[self.currentplayerindex]%3==2:
+                b=np.random.choice(a,1)
+                c=b[0]
+                self.board[c//10][c%10]=-2*self.currentplayerindex+1
+                a=a[a!=c]
+            else:
+                self.board[row][column]= - 2*self.currentplayerindex + 1 #set -1 for player with index 0 and 1 for player with index 1
+                a=a[a!=10*row+column]
+            self.move_count[self.currentplayerindex]+=1
             return True
         return False
     
@@ -46,13 +57,13 @@ class TicTactoe(Gamebase):
         for r in range(10):
             for c in range(10):
                 #draw the board
-                b_x = 80 + c * cellsize
-                b_y = 80 + r * cellsize
+                b_x = 100 + c * cellsize
+                b_y = 100 + r * cellsize
                 pygame.draw.rect(screen,(255,255,255),(b_x,b_y,cellsize,cellsize),2)
 
 		#posn to start the text
-                x = c*cellsize + 80 + cellsize//4
-                y = r*cellsize + 80 + cellsize//4
+                x = c*cellsize + 100 + cellsize//4
+                y = r*cellsize + 100 + cellsize//4
 
                 font = pygame.font.SysFont('Arial',cellsize//2)# font
 
@@ -62,3 +73,4 @@ class TicTactoe(Gamebase):
                 elif self.board[r][c]==1:
                     x_txt=font.render("X",True,(245,74,0)) # draw X
                     screen.blit(x_txt,(x,y))
+

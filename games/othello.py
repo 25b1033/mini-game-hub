@@ -54,6 +54,13 @@ class Othello(Gamebase):
                             break
                         if self.board[dr][dc] == 0:
                             break
+            self.currentplayerindex=1-self.currentplayerindex
+            if not self.valid_move():
+                self.currentplayerindex=1-self.currentplayerindex
+                if not self.valid_move():
+                    a=self.board
+                    a[a==0]=3
+            self.currentplayerindex=1-self.currentplayerindex
             return True
         return False
     
@@ -81,11 +88,11 @@ class Othello(Gamebase):
     def draw(self,screen,cellsize):
         for r in range(8):
             for c in range(8):
-                b_x = c * cellsize + 80
-                b_y = r * cellsize + 80
+                b_x = c * cellsize + 100
+                b_y = r * cellsize + 100
                 #center of cell
-                x = c*cellsize + 80 + cellsize//2
-                y = r*cellsize + 80 + cellsize//2
+                x = c*cellsize + 100 + cellsize//2
+                y = r*cellsize + 100 + cellsize//2
                 rect=pygame.Rect(b_x,b_y,cellsize,cellsize)#draw green board
                 pygame.draw.rect(screen,(0,255,0),rect)
                 pygame.draw.rect(screen,(0,0,0),(b_x,b_y,cellsize,cellsize),1)#draw grid lines
@@ -99,4 +106,4 @@ class Othello(Gamebase):
                 text2=font.render("White: "+ str(a[a==2].size),True,(255,255,255))#text for score of white
                 #display score
                 screen.blit(text,(80,10))
-                screen.blit(text2,(700,10))    
+                screen.blit(text2,(500,10))    
