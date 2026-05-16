@@ -94,16 +94,19 @@ class Othello(Gamebase):
                 x = c*cellsize + 100 + cellsize//2
                 y = r*cellsize + 100 + cellsize//2
                 rect=pygame.Rect(b_x,b_y,cellsize,cellsize)#draw green board
+                rect2=pygame.Rect(b_x-7 +cellsize//2,b_y -7 +cellsize//2,15,15)
                 pygame.draw.rect(screen,(0,255,0),rect)
                 pygame.draw.rect(screen,(0,0,0),(b_x,b_y,cellsize,cellsize),1)#draw grid lines
                 if self.board[r][c]==2:
                     pygame.draw.circle(screen,(255,255,255),(x,y),cellsize//3) #draw a white piece
                 elif self.board[r][c]==1:
                     pygame.draw.circle(screen,(0,0,0),(x,y),cellsize//3) #draw a black piece
-                font = pygame.font.SysFont('Arial',50) #font 
+                elif self.checkmove(r,c):
+                    pygame.draw.rect(screen,(128,128,128),rect2)
+                font = pygame.font.SysFont('Arial',30) #font 
                 a=self.board
                 text=font.render("black: "+str(a[a==1].size),True,(255,255,255)) #text for score of black
                 text2=font.render("White: "+ str(a[a==2].size),True,(255,255,255))#text for score of white
                 #display score
                 screen.blit(text,(80,10))
-                screen.blit(text2,(500,10))    
+                screen.blit(text2,(600,10))    

@@ -25,6 +25,7 @@ class TicTactoe(Gamebase):
                 self.board[row][column]= - 2*self.currentplayerindex + 1 #set -1 for player with index 0 and 1 for player with index 1
                 a=a[a!=10*row+column]
             self.move_count[self.currentplayerindex]+=1
+            self.empty_index=a
             return True
         return False
     

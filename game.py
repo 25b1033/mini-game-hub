@@ -171,6 +171,9 @@ def show_leaderboard():
         while running:
                 #event loop so the window responds
                 for event in pygame.event.get():
+                        if event.type == pygame.QUIT:
+                            pygame.quit()#close pygame window
+                            sys.exit()
                         if event.type == pygame.MOUSEBUTTONDOWN:
                                 #if wins is clicked then argument for leaderboard is wins and the program is closed
                                 if win_btn.collidepoint(event.pos):
@@ -308,6 +311,8 @@ def gameplay(game_class):
 				row = (y-100) // cellsize
 				#Attempt to make a move
 				if game.make_move(row,column):
+					game.draw(screen,cellsize)
+					pygame.display.flip()
 					# Check if the game has been won or drawn 
 					result = game.check_win()
 					if result == 0:
@@ -317,23 +322,24 @@ def gameplay(game_class):
 						#Current player wins
 						winner = game.currentturn_player()
 						loser = game.otherplayer()
+						pygame.time.wait(1000)
 						running = False
 					else: 
 						#Draw
 						winner = "Draw"
+						pygame.time.wait(1000)
 						running = False
 	# Display the final result
-	screen.fill((0, 0, 0))
 	if winner == "Draw":
-		win_text = font.render("It's a Draw!", True, (255, 255, 0))
+		win_text = font.render("It's a Draw!", True, (128,128,128))
 	else:
-		win_text = font.render(f"{winner} wins!", True, (255, 255, 0))
+		win_text = font.render(f"{winner} wins!", True, (128,128,128))
 		record_result(winner,loser,game.__class__.__name__)
-	screen.blit(win_text, (150, 250))
-	pygame.display.flip()
-	
-	pygame.time.wait(1000)
-
+	rect=pygame.Rect(270,290,200,60)
+	pygame.draw.rect(screen,(255,255,0),rect)
+	screen.blit(win_text, (300, 300))
+	pygame.display.flip()	
+	pygame.time.wait(10000)
 	#Recording game results and analytics
 	show_leaderboard()
 	plotting()
